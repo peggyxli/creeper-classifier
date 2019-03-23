@@ -1,6 +1,6 @@
 from flask import jsonify, abort, make_response, request
 from app import app
-
+from .scraper import *
 
 @app.route('/')
 @app.route('/index')
@@ -48,6 +48,12 @@ def create_task():
         'done': False
     }
     tasks.append(task)
+    return jsonify({'task': tasks}), 201
+
+
+@app.route('/api/scraper', methods=['POST'])
+def run_scraper():
+    scraper_run_func()
     return jsonify({'task': tasks}), 201
 
 
