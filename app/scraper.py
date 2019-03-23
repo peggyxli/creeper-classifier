@@ -11,8 +11,9 @@ reddit = praw.Reddit(client_id=app.config['REDDIT_CLIENT_ID'],
 os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = app.config['GOOGLE_CREDENTIALS_PATH']
 
 
-def scraper_run_func():
-    for submission in reddit.subreddit('creepyPMs').top('all', limit=1):
+def scraper_run_func(subreddit_name, intent_name):
+    print (intent_name)
+    for submission in reddit.subreddit(subreddit_name).top('all', limit=1):
         print(submission.title, file=sys.stderr)
         print(submission.url, file=sys.stderr)
         file_extension = submission.url[-4:]

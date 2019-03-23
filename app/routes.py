@@ -1,6 +1,6 @@
 from flask import jsonify, abort, make_response, request
 from app import app
-from .scraper import *
+from .scraper import scraper_run_func
 
 @app.route('/')
 @app.route('/index')
@@ -53,7 +53,9 @@ def create_task():
 
 @app.route('/api/scraper', methods=['POST'])
 def run_scraper():
-    scraper_run_func()
+    if not request.json or not 'subreddit_name' in request.json or not 'intent_name' in request.json:
+        abort(400)
+    scraper_run_func(request.json['subreddit_name'], request.json['intent_name'])
     return jsonify({'task': tasks}), 201
 
 
