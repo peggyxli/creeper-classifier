@@ -1,6 +1,7 @@
 from flask import jsonify, abort, make_response, request
 from app import app
 from .scraper import scraper_run_func
+import dialogflow_v2 as dialogflow
 
 @app.route('/')
 @app.route('/index')
@@ -57,6 +58,22 @@ def run_scraper():
         abort(400)
     scraper_run_func(request.json['subreddit_name'], request.json['intent_name'])
     return jsonify({'response': 'scraper has finished'}), 201
+
+
+@app.route('/api/test_message', methods=['POST'])
+def test_message():
+    if not request.json or not 'email' in request.json or not 'message' in request.json:
+        abort(400)
+
+    session_client = dialogflow.SessionsClient()
+    session = session_client.session_path(app.config['CLASSIFIER_PROJECT_ID'], request.json['email'])
+    print('Session path: {}\n'.format(session))
+
+    text_input = dialogflow.types.TextInput(text=request.json['message'], language_code='en')
+    query_input = dialogflow.types.QueryInput(text=text_input)
+    response = session_client.detect_intent(session=session, query_input=query_input)
+
+    return jsonify({'response': response.query_result.fulfillment_text, 'match': response.query_result.intent_detection_confidence}), 201
 
 
 @app.errorhandler(404)
