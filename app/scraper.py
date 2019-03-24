@@ -12,7 +12,7 @@ reddit = praw.Reddit(client_id=app.config['REDDIT_CLIENT_ID'],
 os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = app.config['GOOGLE_CREDENTIALS_PATH']
 
 
-def scraper_run_func(subreddit_name, intent_name):
+def scraper_run_func(subreddit_name, intent_name, response_message):
     print (intent_name)
     training_phrases = []
 
@@ -36,7 +36,9 @@ def scraper_run_func(subreddit_name, intent_name):
         print('-------------', file=sys.stderr)
 
     if len(training_phrases) > 0:
-        create_intent(intent_name, training_phrases, ['test'])
+        message_arr = []
+        message_arr.append('Warning: ' + response_message)
+        create_intent(intent_name, training_phrases, message_arr)
     return
 
 
@@ -46,8 +48,11 @@ def detect_text_uri(uri):
     image.source.image_uri = uri
 
     response = client.text_detection(image=image)
-    text = response.text_annotations[0].description.replace('\n', ' ')
-    return text.strip()
+    if len(response.text_annotations) > 0:
+        text = response.text_annotations[0].description.replace('\n', ' ')
+        return text.strip()
+    else:
+        return ''
 
 
 def create_intent(my_display_name, training_phrases, message_texts):

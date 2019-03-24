@@ -54,9 +54,9 @@ def create_task():
 
 @app.route('/api/scraper', methods=['POST'])
 def run_scraper():
-    if not request.json or not 'subreddit_name' in request.json or not 'intent_name' in request.json:
+    if not request.json or not 'subreddit_name' in request.json or not 'intent_name' in request.json or not 'response' in request.json:
         abort(400)
-    scraper_run_func(request.json['subreddit_name'], request.json['intent_name'])
+    scraper_run_func(request.json['subreddit_name'], request.json['intent_name'], request.json['response'])
     return jsonify({'response': 'scraper has finished'}), 201
 
 
