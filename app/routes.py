@@ -56,7 +56,7 @@ def run_scraper():
     if not request.json or not 'subreddit_name' in request.json or not 'intent_name' in request.json:
         abort(400)
     scraper_run_func(request.json['subreddit_name'], request.json['intent_name'])
-    return jsonify({'task': tasks}), 201
+    return jsonify({'response': 'scraper has finished'}), 201
 
 
 @app.errorhandler(404)
